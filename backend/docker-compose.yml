@@ -1,0 +1,28 @@
+version: "3.11"
+services:
+  database:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: db_name
+      POSTGRES_USER: db_user_name
+      POSTGRES_PASSWORD: db_user_password
+
+  app:
+    build: .
+    command: >
+      sh -c "
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+    environment:
+      - SECRET_KEY=secret_key
+      - DEBUG=1
+      - DB_HOST=database
+      - DB_NAME=db_name
+      - DB_USER=db_user_name
+      - DB_PASS=db_user_password
+    depends_on:
+      - database
